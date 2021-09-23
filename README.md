@@ -10,7 +10,7 @@
 #### 1、pubspec.yaml
 ```Dart
 oaid_flutter:
-  path: ../oaid_flutter/
+  git: https://github.com/Guardiany/oaid_flutter.git
 ```
 
 #### 2、Android

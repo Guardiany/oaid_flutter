@@ -30,7 +30,6 @@ public class OaidFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "oaid_flutter");
     channel.setMethodCallHandler(this);
-    System.loadLibrary("nllvm1630571663641560568");
   }
 
   private String certFilename = "";
@@ -49,6 +48,7 @@ public class OaidFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
       case "init":
         certFilename = call.argument("certFileName");
         isLogOn = call.argument("isLogOn");
+        System.loadLibrary("nllvm1630571663641560568");
         result.success(true);
         break;
       case "getOaid":

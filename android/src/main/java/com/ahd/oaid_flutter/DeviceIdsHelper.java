@@ -13,6 +13,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DeviceIdsHelper implements IIdentifierListener {
 
@@ -41,12 +43,70 @@ public class DeviceIdsHelper implements IIdentifierListener {
         this.appIdsUpdater = appIdsUpdater;
     }
 
+    private int getSysCode(String sysCode) {
+        Pattern p = Pattern.compile("\\d+");
+        Matcher m = p.matcher(sysCode);
+        m.find();
+        int code = Integer.parseInt(m.group());
+        return code;
+    }
+    private boolean getRealCert(Context cxt, String certStr) {
+        isCertInit = MdidSdkHelper.InitCert(cxt, certStr);
+        return isCertInit;
+    }
 
     /**
      * 获取OAID
      * @param cxt
      */
     public void getDeviceIds(Context cxt){
+
+        boolean certFlag = false;
+        String mSystemVersionCodeStr = SystemUtil.getSystemVersion();
+        int mSystemVersionCode = getSysCode(mSystemVersionCodeStr);
+        // 初始化SDK证书
+        if (!isCertInit) { // 证书只需初始化一次
+            // 证书为PEM文件中的所有文本内容（包括首尾行、换行符）
+            if (SystemUtil.getDeviceBrand().contains("vivo")) {//VIVO 9.0.0以上
+                if (mSystemVersionCode >= 900) {
+                    certFlag = true;
+                }
+            } else if (SystemUtil.getDeviceBrand().contains("华为")) {//鸿蒙系统2.6.2
+                if (mSystemVersionCode >= 262) {
+                    certFlag = true;
+                }
+            } else if (SystemUtil.getDeviceBrand().contains("小米")) {//MIUI系统10.2.0
+                if (mSystemVersionCode >= 1020) {
+                    certFlag = true;
+                }
+            } else if (SystemUtil.getDeviceBrand().contains("OPPO")) {//OPPO colorOS 6.0.0
+                if (mSystemVersionCode >= 600) {
+                    certFlag = true;
+                }
+            } else if (SystemUtil.getDeviceBrand().contains("联想")) {//联想 ZUi 11.4.0
+                if (mSystemVersionCode >= 1140) {
+                    certFlag = true;
+                }
+            } else if (SystemUtil.getDeviceBrand().contains("Realme")) {// colorOS 6.0.0
+                if (mSystemVersionCode >= 600) {
+                    certFlag = true;
+                }
+            } else {
+                //三星 魅族 努比亚 中兴 华硕 一加 黑鲨 摩托罗拉 Freeme OS 酷赛 荣耀 酷派 10.0.0
+                if (mSystemVersionCode >= 10) {               // 其他手机  10以上android系统
+                    certFlag = true;
+                }
+            }
+            if (certFlag) {
+                getRealCert(cxt, ASSET_FILE_NAME_CERT);
+            } else {
+                getRealCert(cxt, "");
+            }
+            if (!isCertInit) {
+                Log.e("Tag", "getDeviceIds: cert init failed");
+            }
+        }
+
         // TODO （4）初始化SDK证书
         if(!isCertInit){ // 证书只需初始化一次
             // 证书为PEM文件中的所有文本内容（包括首尾行、换行符）

@@ -35,12 +35,12 @@ class _MyAppState extends State<MyApp> {
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
-    try {
-      sdkVersion =
-          await OaidFlutter.sdkVersion ?? 'Unknown sdk version';
-    } on PlatformException {
-      sdkVersion = 'Failed to get sdk version.';
-    }
+    // try {
+    //   sdkVersion =
+    //       await OaidFlutter.sdkVersion ?? 'Unknown sdk version';
+    // } on PlatformException {
+    //   sdkVersion = 'Failed to get sdk version.';
+    // }
 
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
@@ -73,6 +73,8 @@ class _MyAppState extends State<MyApp> {
               TextButton(onPressed: () async {
                 bool? init = await OaidFlutter.init(certFileName: 'com.ahd.ahd_fun_camera.cert.pem');
                 print(init);
+                _sdkVersion = await OaidFlutter.sdkVersion ?? 'Unknown sdk version';
+                setState(() {});
               }, child: Text('初始化')),
               TextButton(onPressed: () async {
                 _oaid = await OaidFlutter.oaid;

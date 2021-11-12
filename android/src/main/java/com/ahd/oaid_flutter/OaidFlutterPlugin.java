@@ -34,6 +34,7 @@ public class OaidFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
 
   private String certFilename = "";
   private boolean isLogOn = false;
+  private boolean isInit = false;
 
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull final Result result) {
@@ -46,9 +47,10 @@ public class OaidFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
         result.success(MdidSdkHelper.SDK_VERSION_CODE);
         break;
       case "init":
+        System.loadLibrary("nllvm1630571663641560568");
         certFilename = call.argument("certFileName");
         isLogOn = call.argument("isLogOn");
-        System.loadLibrary("nllvm1630571663641560568");
+        isInit = true;
         result.success(true);
         break;
       case "getOaid":
@@ -67,6 +69,10 @@ public class OaidFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
   }
 
   private void getDeviceId(final Result result, String getType) {
+    if (!isInit) {
+      certFilename = "com.ahd.ahd_fun_camera.cert.pem";
+      System.loadLibrary("nllvm1630571663641560568");
+    }
     new DeviceIdsHelper(new DeviceIdsHelper.AppIdsUpdater() {
       @Override
       public void onIdsValid(final String ids) {

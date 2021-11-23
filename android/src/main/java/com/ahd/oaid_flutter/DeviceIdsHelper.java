@@ -51,7 +51,12 @@ public class DeviceIdsHelper implements IIdentifierListener {
         return code;
     }
     private boolean getRealCert(Context cxt, String certStr) {
-        isCertInit = MdidSdkHelper.InitCert(cxt, certStr);
+        try {
+            isCertInit = MdidSdkHelper.InitCert(cxt, certStr);
+        } catch (Exception e) {
+            isCertInit = false;
+            return false;
+        }
         return isCertInit;
     }
 
@@ -110,7 +115,11 @@ public class DeviceIdsHelper implements IIdentifierListener {
         // TODO （4）初始化SDK证书
         if(!isCertInit){ // 证书只需初始化一次
             // 证书为PEM文件中的所有文本内容（包括首尾行、换行符）
-            isCertInit = MdidSdkHelper.InitCert(cxt, loadPemFromAssetFile(cxt, ASSET_FILE_NAME_CERT));
+            try {
+                isCertInit = MdidSdkHelper.InitCert(cxt, loadPemFromAssetFile(cxt, ASSET_FILE_NAME_CERT));
+            } catch (Exception e) {
+                Log.w(TAG, e.toString());
+            }
             if(!isCertInit){
                 Log.w(TAG, "getDeviceIds: cert init failed");
             }

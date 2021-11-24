@@ -73,32 +73,31 @@ public class DeviceIdsHelper implements IIdentifierListener {
         if (!isCertInit) { // 证书只需初始化一次
             // 证书为PEM文件中的所有文本内容（包括首尾行、换行符）
             if (SystemUtil.getDeviceBrand().contains("vivo")) {//VIVO 9.0.0以上
-                if (mSystemVersionCode >= 900) {
+                if (VersionManagementUtil.VersionComparison(mSystemVersionCodeStr,"9.0.0")==1) {
                     certFlag = true;
                 }
-            } else if (SystemUtil.getDeviceBrand().contains("华为")) {//鸿蒙系统2.6.2
-                if (mSystemVersionCode >= 262) {
+            } else if (SystemUtil.getDeviceBrand().contains("Huawei")||SystemUtil.getDeviceBrand().contains("honor")) {//鸿蒙系统2.6.2
+                if (VersionManagementUtil.VersionComparison(mSystemVersionCodeStr,"2.6.2")==1) {
                     certFlag = true;
                 }
-            } else if (SystemUtil.getDeviceBrand().contains("小米")) {//MIUI系统10.2.0
-                if (mSystemVersionCode >= 1020) {
+            } else if (SystemUtil.getDeviceBrand().contains("xiaomi")) {//MIUI系统10.2.0
+                if (VersionManagementUtil.VersionComparison(mSystemVersionCodeStr,"10.2.0")==1) {
                     certFlag = true;
                 }
             } else if (SystemUtil.getDeviceBrand().contains("OPPO")) {//OPPO colorOS 6.0.0
-                if (mSystemVersionCode >= 600) {
+                if (VersionManagementUtil.VersionComparison(mSystemVersionCodeStr,"6.0.0")==1) {
                     certFlag = true;
                 }
             } else if (SystemUtil.getDeviceBrand().contains("联想")) {//联想 ZUi 11.4.0
-                if (mSystemVersionCode >= 1140) {
+                if (VersionManagementUtil.VersionComparison(mSystemVersionCodeStr,"11.4.0")==1) {
                     certFlag = true;
                 }
             } else if (SystemUtil.getDeviceBrand().contains("Realme")) {// colorOS 6.0.0
-                if (mSystemVersionCode >= 600) {
+                if (VersionManagementUtil.VersionComparison(mSystemVersionCodeStr,"6.0.0")==1) {
                     certFlag = true;
                 }
             } else {
-                //三星 魅族 努比亚 中兴 华硕 一加 黑鲨 摩托罗拉 Freeme OS 酷赛 荣耀 酷派 10.0.0
-                if (mSystemVersionCode >= 10) {               // 其他手机  10以上android系统
+                if (VersionManagementUtil.VersionComparison(mSystemVersionCodeStr,"10.0.0")==1) {
                     certFlag = true;
                 }
             }

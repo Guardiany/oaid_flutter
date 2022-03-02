@@ -46,6 +46,3 @@ vaid = await OaidFlutter.vaid;
 ///获取aaid
 aaid = await OaidFlutter.aaid;
 ```
-
-## 联系方式
-* Email: 1204493146@qq.com

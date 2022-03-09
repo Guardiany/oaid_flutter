@@ -56,6 +56,9 @@ public class DeviceIdsHelper implements IIdentifierListener {
         } catch (Exception e) {
             isCertInit = false;
             return false;
+        } catch (Error error) {
+            isCertInit = false;
+            return false;
         }
         return isCertInit;
     }
@@ -118,6 +121,8 @@ public class DeviceIdsHelper implements IIdentifierListener {
                 isCertInit = MdidSdkHelper.InitCert(cxt, loadPemFromAssetFile(cxt, ASSET_FILE_NAME_CERT));
             } catch (Exception e) {
                 Log.w(TAG, e.toString());
+            } catch (Error error) {
+                Log.e(TAG, error.toString());
             }
             if(!isCertInit){
                 Log.w(TAG, "getDeviceIds: cert init failed");

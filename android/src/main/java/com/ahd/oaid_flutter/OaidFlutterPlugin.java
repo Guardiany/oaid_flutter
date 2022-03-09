@@ -25,6 +25,7 @@ public class OaidFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
+    System.loadLibrary("msaoaidsec");
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "oaid_flutter");
     channel.setMethodCallHandler(this);
   }
@@ -45,7 +46,7 @@ public class OaidFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
         break;
       case "init":
 //        System.loadLibrary("nllvm1630571663641560568");
-        System.loadLibrary("msaoaidsec");
+//        System.loadLibrary("msaoaidsec");
         certFilename = call.argument("certFileName");
         isLogOn = call.argument("isLogOn");
         isInit = true;
@@ -67,22 +68,26 @@ public class OaidFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
   }
 
   private void getDeviceId(final Result result, String getType) {
-    if (!isInit) {
-      certFilename = "com.ahd.ahd_fun_camera.cert.pem";
-//      System.loadLibrary("nllvm1630571663641560568");
-      System.loadLibrary("msaoaidsec");
+//    if (!isInit) {
+//      certFilename = "com.ahd.ahd_fun_camera.cert.pem";
+////      System.loadLibrary("nllvm1630571663641560568");
+//      System.loadLibrary("msaoaidsec");
+//    }
+    try {
+      new DeviceIdsHelper(new DeviceIdsHelper.AppIdsUpdater() {
+        @Override
+        public void onIdsValid(final String ids) {
+          mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+              result.success(ids);
+            }
+          });
+        }
+      }, certFilename, getType, isLogOn).getDeviceIds(mActivity);
+    } catch (Error error) {
+      result.success("");
     }
-    new DeviceIdsHelper(new DeviceIdsHelper.AppIdsUpdater() {
-      @Override
-      public void onIdsValid(final String ids) {
-        mActivity.runOnUiThread(new Runnable() {
-          @Override
-          public void run() {
-            result.success(ids);
-          }
-        });
-      }
-    }, certFilename, getType, isLogOn).getDeviceIds(mActivity);
   }
 
   @Override

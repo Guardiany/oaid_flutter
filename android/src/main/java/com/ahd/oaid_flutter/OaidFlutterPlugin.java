@@ -1,6 +1,12 @@
 package com.ahd.oaid_flutter;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
+import android.os.Build;
+import android.telephony.TelephonyManager;
+import android.util.Log;
+import android.webkit.WebView;
 
 import androidx.annotation.NonNull;
 
@@ -22,12 +28,16 @@ public class OaidFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
   /// when the Flutter Engine is detached from the Activity
   private MethodChannel channel;
   private Activity mActivity;
+  private Context mContext;
+  private String productUA;
+  private String imei;
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     System.loadLibrary("msaoaidsec");
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "oaid_flutter");
     channel.setMethodCallHandler(this);
+    mContext = flutterPluginBinding.getApplicationContext();
   }
 
   private String certFilename = "";
@@ -61,10 +71,54 @@ public class OaidFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
       case "getAaid":
         getDeviceId(result, DeviceIdsHelper.GET_ID_TYPE_AAID);
         break;
+      case "getUa":
+        getUa(result);
+        break;
+      case "getImei":
+        getImei(result);
+        break;
       default:
         result.notImplemented();
         break;
     }
+  }
+
+  private void getUa(final Result result) {
+    productUA = new WebView(mActivity).getSettings().getUserAgentString();
+
+    if (productUA == null) {
+      productUA = "";
+    }
+    if("".equals(productUA)){
+      productUA = System.getProperty("http.agent");
+    }
+
+    mActivity.runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        result.success(productUA);
+      }
+    });
+  }
+
+  private void getImei(final Result result) {
+    TelephonyManager telephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      try {
+        imei = telephonyManager.getImei();
+      } catch (Exception e) {
+        Log.e("OaidPlugin", "imei get error:" + e.toString());
+      }
+    }
+    if (imei == null) {
+      imei = "";
+    }
+    mActivity.runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        result.success(imei);
+      }
+    });
   }
 
   private void getDeviceId(final Result result, String getType) {

@@ -33,6 +33,20 @@ class OaidFlutter {
     });
   }
 
+  static Future<String?> get imei async {
+    if (Platform.isIOS) {
+      return null;
+    }
+    return await _channel.invokeMethod('getImei');
+  }
+
+  static Future<String?> get ua async {
+    if (Platform.isIOS) {
+      return null;
+    }
+    return await _channel.invokeMethod('getUa');
+  }
+
   static Future<String?> get oaid async {
     if (Platform.isIOS) {
       return null;

@@ -3,6 +3,9 @@ package com.ahd.oaid_flutter;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -11,6 +14,8 @@ import android.webkit.WebView;
 import androidx.annotation.NonNull;
 
 import com.bun.miitmdid.core.MdidSdkHelper;
+
+import java.util.List;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
@@ -77,10 +82,33 @@ public class OaidFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
       case "getImei":
         getImei(result);
         break;
+      case "launch":
+        launchApp(result, call);
+        break;
       default:
         result.notImplemented();
         break;
     }
+  }
+
+  private void launchApp(final Result result, MethodCall call) {
+    String packageName = call.argument("packageName");
+    if (isInstallApp(packageName)) {
+      mActivity.startActivity(mContext.getPackageManager().getLaunchIntentForPackage(packageName));
+      result.success(true);
+    } else {
+      result.success(false);
+    }
+  }
+
+  private boolean isInstallApp(String name) {
+    final PackageManager packageManager = mContext.getPackageManager();
+    List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);
+    for (int i = 0; i < pinfo.size(); i++) {
+      if (pinfo.get(i).packageName.equalsIgnoreCase(name))
+        return true;
+    }
+    return false;
   }
 
   private void getUa(final Result result) {

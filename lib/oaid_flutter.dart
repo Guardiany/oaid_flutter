@@ -33,6 +33,14 @@ class OaidFlutter {
     });
   }
 
+  static Future<bool?> launchApp({
+    required String packageName,
+  }) async {
+    return await _channel.invokeMethod('launch', {
+      'packageName': packageName,
+    });
+  }
+
   static Future<String?> get imei async {
     if (Platform.isIOS) {
       return null;
